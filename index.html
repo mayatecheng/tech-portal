@@ -24,7 +24,7 @@
 
     <script type="text/babel">
         const { useState, useEffect } = React;
-　　　　　const [linksData, setLinksData] = useState([]);
+　　　　　
         // ==========================================
         // ★★★ ここが毎月の更新エリアです ★★★
         // ==========================================
@@ -105,18 +105,6 @@
             const [selectedItem, setSelectedItem] = useState(null);
 
             const [linksData, setLinksData] = useState([]);
-
-　　　　　　useEffect(() => {
-           fetch('./links.json')
-           .then(res => res.json())
-           .then(data => {
-           console.log('links.json 読み込み成功', data);
-           setLinksData(data);
-　　　　　　　　    })
-           .catch(err => {
-           console.error('links.json 読み込み失敗', err);
-　　　　　　　　    });
-　　　　　　　　}, []);
             
             const navigateTo = (view, item = null) => {
                 if (item) setSelectedItem(item);
@@ -341,5 +329,6 @@
     </script>
 </body>
 </html>
+
 
 
