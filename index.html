@@ -1,124 +1,329 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>テックエンジニアリング事業本部ポータル</title>
-
-  <!-- ===== デザインCSS ===== -->
-  <style>
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-                   "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
-      background: #f4f7fb;
-      color: #333;
-    }
-
-    header {
-      padding: 24px 16px 8px;
-    }
-
-    h1 {
-      font-size: 22px;
-      margin: 0 0 8px;
-    }
-
-    .portal-desc {
-      font-size: 13px;
-      color: #666;
-      margin-bottom: 24px;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 16px;
-      padding: 0 16px 32px;
-    }
-
-    .card {
-      background: #fff;
-      border-radius: 18px;
-      padding: 18px;
-      text-decoration: none;
-      color: inherit;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 32px rgba(0,0,0,0.12);
-    }
-
-    .card-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: #e8f0ff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      margin-bottom: 10px;
-    }
-
-    .card-title {
-      font-size: 16px;
-      font-weight: 700;
-    }
-
-    .card-sub {
-      font-size: 12px;
-      color: #666;
-      margin-top: 4px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>テックエンジニアリング事業本部ポータル</title>
+    <!-- デザイン(Tailwind CSS) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- アプリのエンジン(React) -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- アイコン(Lucide) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        body { background-color: #f3f4f6; font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
 </head>
-
 <body>
+    <div id="root"></div>
 
-  <!-- ===== ヘッダー ===== -->
-  <header>
-    <h1>テックエンジニアリング事業本部ポータル</h1>
-    <p class="portal-desc">
-      各種社内規定・申請書類は最新版をこちらからご確認ください。
-    </p>
-  </header>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
 
-  <!-- ===== ポータルカード ===== -->
-  <section class="cards">
+        // ==========================================
+        // ★★★ ここが毎月の更新エリアです ★★★
+        // ==========================================
+        const APP_DATA = {
+            // ■ メニュー項目とリンク先
+            // urlの部分に、TeamsのファイルリンクやGoogleドライブのURLを貼り付けてください
+            menus: [
+                { id: 'rules', title: '社内規定', icon: 'book-open', color: 'bg-blue-100 text-blue-600', desc: '就業規則・経費精算規定', url: '#' },
+                { id: 'hr', title: '人事発令', icon: 'megaphone', color: 'bg-indigo-100 text-indigo-600', desc: '最新の辞令・組織変更', url: '#' },
+                { id: 'org', title: '組織図', icon: 'network', color: 'bg-cyan-100 text-cyan-600', desc: '事業部体制図・連絡網', url: '#' },
+                { id: 'calendar', title: '就業カレンダー', icon: 'calendar', color: 'bg-green-100 text-green-600', desc: '年間休日・会社指定日', url: '#' },
+                { id: 'trip', title: '出張関係', icon: 'plane', color: 'bg-orange-100 text-orange-600', desc: '出張申請・旅費精算', url: '#' },
+                { id: 'tech', title: '技術課マニュアル', icon: 'wrench', color: 'bg-slate-100 text-slate-600', desc: '機電系技術資料・手順書', url: '#' },
+                { id: 'clients', title: '取引企業一覧', icon: 'building-2', color: 'bg-purple-100 text-purple-600', desc: '顧客情報・担当者リスト', url: '#' },
+            ],
 
-    <!-- 就業規則 -->
-    <a class="card" href="https://example.com" target="_blank">
-      <div class="card-icon">📘</div>
-      <div class="card-title">就業規則</div>
-      <div class="card-sub">社内規定</div>
-    </a>
+            // ■ 最新のお知らせ (最上部)
+            news: [
+                { id: 1, date: 'New', cat: '重要', title: '【重要】2月13日（金）江種本部長のお誕生日となります！', color: 'text-red-600', bg: 'bg-red-50' },
+                { id: 2, date: '5/21', cat: '人事', title: '6月1日付 組織変更のお知らせ', color: 'text-indigo-600', bg: 'bg-indigo-50' },
+                { id: 3, date: '5/20', cat: '技術', title: '新規測定器の操作マニュアルを公開しました', color: 'text-blue-600', bg: 'bg-blue-50' },
+            ],
 
-    <!-- 勤怠ルール -->
-    <a class="card" href="#" target="_blank">
-      <div class="card-icon">⏰</div>
-      <div class="card-title">勤怠ルール</div>
-      <div class="card-sub">勤務・残業</div>
-    </a>
+            // ■ 技術課からのメッセージ (中段)
+            techMessage: {
+                title: "技術者としての市場価値を高めよう",
+                author: "技術課長：佐藤",
+                content: "今期は資格取得支援を強化しています。現場で得た知見を共有し、チーム全体で技術力を底上げしていきましょう。",
+                updated: "2024.05.20"
+            },
 
-    <!-- 経費申請 -->
-    <a class="card" href="#" target="_blank">
-      <div class="card-icon">💰</div>
-      <div class="card-title">経費申請</div>
-      <div class="card-sub">申請書類</div>
-    </a>
+            // ■ 求人情報
+            jobs: [
+                { 
+                    id: 1, 
+                    title: "半導体製造装置の立上げエンジニア", 
+                    place: "熊本県 / クリーンルーム内", 
+                    image: "https://images.unsplash.com/photo-1581092921461-eab6245b09cd?auto=format&fit=crop&q=80&w=400",
+                    description: "最先端の半導体工場にて、装置の搬入・据付・調整業務を担当していただきます。",
+                    skills: ["半導体装置の知識", "英語マニュアル読解", "工具使用経験"],
+                    link: "#" 
+                },
+                { 
+                    id: 2, 
+                    title: "自動車生産ラインの保全・メンテ", 
+                    place: "愛知県 / 大手自動車工場", 
+                    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=400",
+                    description: "産業用ロボットを含む生産ラインの定期メンテナンスおよびトラブル対応。",
+                    skills: ["シーケンサ(PLC)", "電気回路図", "保全技能士"],
+                    link: "#"
+                }
+            ],
 
-    <!-- 各種申請 -->
-    <a class="card" href="#" target="_blank">
-      <div class="card-icon">📝</div>
-      <div class="card-title">各種申請</div>
-      <div class="card-sub">フォーマット</div>
-    </a>
+            // ■ リンク設定 (ボタンを押した時の飛び先)
+            links: {
+                referralForm: "https://forms.office.com/...", // 紹介キャンペーン応募フォーム
+                referralFlyer: "https://teams.microsoft.com/...", // 紹介チラシPDF
+                // techEmail: 技術相談用のメールアドレスを設定してください
+                techEmail: "mailto:tech-support@example.com?subject=技術相談", 
+            }
+        };
 
-  </section>
+        // ==========================================
+        // 以下、システムコード（触らなくてOK）
+        // ==========================================
 
+        // アイコン表示用パーツ
+        const Icon = ({ name, className }) => {
+            useEffect(() => {
+                if (window.lucide) window.lucide.createIcons();
+            });
+            return <i data-lucide={name} className={className}></i>;
+        };
+
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('home');
+            const [currentView, setCurrentView] = useState('main'); 
+            const [selectedItem, setSelectedItem] = useState(null);
+
+            const navigateTo = (view, item = null) => {
+                if (item) setSelectedItem(item);
+                setCurrentView(view);
+                window.scrollTo(0, 0);
+            };
+
+            // リンクを開く関数
+            const openLink = (url) => {
+                if (!url || url === '#') {
+                    alert('リンク先が設定されていません。\nAPP_DATAのurl部分を編集してください。');
+                } else {
+                    window.open(url, '_blank');
+                }
+            };
+
+            // 詳細画面
+            const DetailView = ({ item, onBack }) => (
+                <div className="min-h-screen bg-gray-50 animate-in slide-in-from-right duration-300 pb-10">
+                    <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 px-4 h-14 flex items-center gap-3 shadow-sm">
+                        <button onClick={onBack} className="p-2 -ml-2 hover:bg-gray-100 rounded-full text-slate-600">
+                            <Icon name="arrow-left" className="w-6 h-6" />
+                        </button>
+                        <h2 className="font-bold text-lg text-slate-800">{item.title}</h2>
+                    </div>
+                    <div className="p-4 space-y-4">
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 text-center">
+                            <div className={`w-16 h-16 mx-auto rounded-2xl ${item.color} flex items-center justify-center mb-3`}>
+                                <Icon name={item.icon} className="w-8 h-8" />
+                            </div>
+                            <p className="text-sm text-slate-500">{item.desc}</p>
+                        </div>
+                        <div className="space-y-3">
+                            <h4 className="text-xs font-bold text-slate-400 uppercase ml-1">アクション</h4>
+                            {/* 実際のリンクを開くボタン */}
+                            <button onClick={() => openLink(item.url)} className="w-full flex items-center justify-between p-4 bg-white border border-gray-200 rounded-xl shadow-sm active:bg-gray-50 hover:bg-blue-50 transition-colors">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-blue-50 text-blue-600 rounded-lg"><Icon name="file-text" className="w-5 h-5" /></div>
+                                    <span className="font-bold text-slate-700 text-sm">資料・フォルダを開く</span>
+                                </div>
+                                <Icon name="external-link" className="w-4 h-4 text-gray-300" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // ホーム画面
+            const HomeView = () => (
+                <div className="pb-10 animate-in fade-in duration-300">
+                    {/* ヘッダー(デザイン変更版) */}
+                    <header className="bg-slate-900 text-white pt-10 pb-12 px-6 rounded-b-[2rem] relative overflow-hidden shadow-lg">
+                        <div className="absolute top-0 right-0 p-6 opacity-10">
+                            <Icon name="wrench" className="w-48 h-48 text-white transform rotate-12" />
+                        </div>
+                        <div className="relative z-10">
+                            <div className="flex flex-col">
+                                <span className="text-blue-400 font-bold tracking-widest text-xs mb-1">TECH ENGINEERING</span>
+                                <span className="text-white font-bold text-xl tracking-wide">事業本部ポータル</span>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div className="px-4 -mt-8 relative z-20 space-y-6">
+                        {/* 最新のお知らせ */}
+                        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                            <div className="bg-gray-50 px-4 py-2 border-b border-gray-100 flex items-center gap-2">
+                                <Icon name="bell" className="w-4 h-4 text-slate-400" />
+                                <span className="text-xs font-bold text-slate-500">NEWS / 最新情報</span>
+                            </div>
+                            <div className="divide-y divide-gray-50">
+                                {APP_DATA.news.map((item) => (
+                                    <div key={item.id} className="p-3 flex items-start gap-3 active:bg-gray-50 transition-colors">
+                                        <div className={`flex flex-col items-center min-w-[3rem] p-1 rounded-lg ${item.bg}`}>
+                                            <span className={`text-[10px] font-bold ${item.color}`}>{item.cat}</span>
+                                            <span className="text-xs font-bold text-slate-500">{item.date}</span>
+                                        </div>
+                                        <p className="text-sm text-slate-700 font-medium leading-snug pt-1">{item.title}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* メニューグリッド (APP_DATAから生成) */}
+                        <div className="grid grid-cols-4 gap-y-4 gap-x-2 bg-white rounded-2xl border border-gray-200 p-4 shadow-sm">
+                            {APP_DATA.menus.map((item) => (
+                                <button key={item.id} onClick={() => navigateTo('detail', item)} className="flex flex-col items-center gap-2 group">
+                                    <div className={`w-12 h-12 rounded-2xl ${item.color} flex items-center justify-center shadow-sm group-active:scale-95 transition-transform`}>
+                                        <Icon name={item.icon} className="w-6 h-6" />
+                                    </div>
+                                    <span className="text-[10px] font-bold text-slate-600 text-center leading-tight">{item.title}</span>
+                                </button>
+                            ))}
+                            {/* 「全て」ボタンを削除しました */}
+                        </div>
+
+                        {/* 技術課メッセージ */}
+                        <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-5 text-white shadow-md relative overflow-hidden">
+                            <div className="absolute right-0 top-0 p-4 opacity-5">
+                                <Icon name="message-square" className="w-32 h-32 text-white" />
+                            </div>
+                            <div className="relative z-10 flex gap-4">
+                                <div className="shrink-0">
+                                    <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center border-2 border-slate-700">
+                                        <Icon name="user-plus" className="w-6 h-6 text-white" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <div className="flex items-center justify-between mb-1">
+                                        <h3 className="text-sm font-bold text-blue-200">Tech Message</h3>
+                                        <span className="text-[10px] opacity-60">{APP_DATA.techMessage.updated}</span>
+                                    </div>
+                                    <p className="text-xs leading-relaxed opacity-90 mb-2 font-medium">
+                                        "{APP_DATA.techMessage.content}"
+                                    </p>
+                                    <p className="text-[10px] text-right opacity-70 border-t border-white/10 pt-1 mt-1 inline-block w-full">
+                                        {APP_DATA.techMessage.author}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* リファラル採用 */}
+                        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-5 text-white shadow-lg relative overflow-hidden group">
+                            <div className="relative z-10">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <span className="bg-yellow-400 text-blue-900 text-[10px] font-bold px-2 py-0.5 rounded">報奨金あり</span>
+                                    <h3 className="font-bold text-base">エンジニア紹介制度</h3>
+                                </div>
+                                <p className="text-xs text-blue-100 mb-4">知人紹介で共に働く仲間を募集中。</p>
+                                <div className="flex gap-2">
+                                    <button onClick={() => openLink(APP_DATA.links.referralFlyer)} className="flex-1 bg-white/20 hover:bg-white/30 text-white text-xs font-bold py-2.5 rounded-lg text-center backdrop-blur-sm transition-colors">
+                                        チラシ(PDF)
+                                    </button>
+                                    <button onClick={() => openLink(APP_DATA.links.referralForm)} className="flex-1 bg-white text-blue-700 text-xs font-bold py-2.5 rounded-lg text-center shadow-sm flex items-center justify-center gap-1 active:bg-blue-50">
+                                        応募フォーム <Icon name="chevron-right" className="w-3 h-3 ml-1 inline" />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 求人情報 */}
+                        <div>
+                            <h3 className="font-bold text-slate-700 mb-3 flex items-center gap-2 px-1 text-sm">
+                                <Icon name="briefcase" className="w-4 h-4 text-slate-400" />
+                                Pick Up Jobs
+                            </h3>
+                            <div className="flex gap-3 overflow-x-auto pb-4 -mx-4 px-4 snap-x hide-scrollbar">
+                                {APP_DATA.jobs.map((job) => (
+                                    <div key={job.id} className="snap-center shrink-0 w-72 bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 flex flex-col">
+                                        <div className="h-32 bg-gray-200 relative">
+                                            <img src={job.image} alt="job" className="w-full h-full object-cover" />
+                                            <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 rounded-md">
+                                                {job.place}
+                                            </div>
+                                        </div>
+                                        <div className="p-4 flex-1 flex flex-col">
+                                            <h4 className="font-bold text-slate-800 text-sm mb-2 leading-snug">{job.title}</h4>
+                                            <p className="text-xs text-slate-500 mb-3 line-clamp-2">{job.description}</p>
+                                            
+                                            <div className="mt-auto">
+                                                <p className="text-[10px] font-bold text-slate-400 mb-1">求めるスキル・経験</p>
+                                                <div className="flex flex-wrap gap-1 mb-3">
+                                                    {job.skills.map((skill, idx) => (
+                                                        <span key={idx} className="bg-blue-50 text-blue-700 border border-blue-100 text-[10px] px-2 py-0.5 rounded-md">
+                                                            {skill}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                                <button onClick={() => openLink(job.link)} className="w-full bg-slate-800 text-white text-xs font-bold py-2.5 rounded-lg active:bg-slate-700 transition-colors">
+                                                    詳細を見る
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* お問い合わせ (技術相談のみ) */}
+                        <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm mb-6">
+                            <h3 className="font-bold text-slate-700 mb-4 flex items-center gap-2">
+                                <Icon name="send" className="w-4 h-4 text-blue-500" />
+                                お問い合わせ
+                            </h3>
+                            {/* 技術相談メールのみのシングルボタンに変更 */}
+                            <button onClick={() => openLink(APP_DATA.links.techEmail)} className="w-full bg-blue-50 border border-blue-200 p-4 rounded-xl flex items-center justify-between gap-3 active:bg-blue-100 transition-colors hover:bg-blue-100 group">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm text-blue-600 group-hover:scale-110 transition-transform">
+                                        <Icon name="mail" className="w-5 h-5" />
+                                    </div>
+                                    <div className="text-left">
+                                        <span className="block text-sm font-bold text-blue-900">技術相談へメールする</span>
+                                        <span className="block text-xs text-blue-600 opacity-80">技術課の担当者へ直接連絡</span>
+                                    </div>
+                                </div>
+                                <Icon name="chevron-right" className="w-5 h-5 text-blue-400" />
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            );
+
+            return (
+                <div className="min-h-screen bg-gray-50 font-sans text-slate-800">
+                    {currentView === 'detail' ? (
+                        <DetailView item={selectedItem} onBack={() => navigateTo('main')} />
+                    ) : (
+                        activeTab === 'home' ? <HomeView /> : 
+                        <div className="pt-20 px-4 text-center">
+                            <h2 className="text-lg font-bold text-slate-400">メニュー画面</h2>
+                            <button onClick={() => setActiveTab('home')} className="mt-4 text-blue-600 underline">戻る</button>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
 </body>
 </html>
