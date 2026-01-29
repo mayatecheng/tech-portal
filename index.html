@@ -5,140 +5,120 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>テックエンジニアリング事業本部ポータル</title>
 
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- React -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-  <!-- Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-
+  <!-- ===== デザインCSS ===== -->
   <style>
     body {
-      background-color: #f3f4f6;
-      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
-        "Hiragino Sans", Meiryo, sans-serif;
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                   "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+      background: #f4f7fb;
+      color: #333;
+    }
+
+    header {
+      padding: 24px 16px 8px;
+    }
+
+    h1 {
+      font-size: 22px;
+      margin: 0 0 8px;
+    }
+
+    .portal-desc {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 24px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      padding: 0 16px 32px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 18px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+    }
+
+    .card-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: #e8f0ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .card-sub {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
     }
   </style>
 </head>
 
 <body>
-  <div id="root"></div>
 
-  <script type="text/babel">
-    const { useState, useEffect } = React;
+  <!-- ===== ヘッダー ===== -->
+  <header>
+    <h1>テックエンジニアリング事業本部ポータル</h1>
+    <p class="portal-desc">
+      各種社内規定・申請書類は最新版をこちらからご確認ください。
+    </p>
+  </header>
 
-    // ==========================================
-    // 毎月更新エリア（固定データ）
-    // ==========================================
-    const APP_DATA = {
-      menus: [
-        {
-          id: "rules",
-          title: "社内規定",
-          icon: "book-open",
-          color: "bg-blue-100 text-blue-600",
-          desc: "就業規則・各種規定",
-        },
-      ],
-    };
+  <!-- ===== ポータルカード ===== -->
+  <section class="cards">
 
-    // アイコン
-    const Icon = ({ name, className }) => {
-      useEffect(() => {
-        if (window.lucide) window.lucide.createIcons();
-      });
-      return <i data-lucide={name} className={className}></i>;
-    };
+    <!-- 就業規則 -->
+    <a class="card" href="https://example.com" target="_blank">
+      <div class="card-icon">📘</div>
+      <div class="card-title">就業規則</div>
+      <div class="card-sub">社内規定</div>
+    </a>
 
-    const App = () => {
-      const [linksData, setLinksData] = useState([]);
-      const [selectedItem, setSelectedItem] = useState(null);
+    <!-- 勤怠ルール -->
+    <a class="card" href="#" target="_blank">
+      <div class="card-icon">⏰</div>
+      <div class="card-title">勤怠ルール</div>
+      <div class="card-sub">勤務・残業</div>
+    </a>
 
-      // ✅ JSON 読み込み（文法完全OK版）
-      useEffect(() => {
-        fetch("./links.json")
-          .then((res) => {
-            if (!res.ok) {
-              throw new Error("links.json 読み込み失敗");
-            }
-            return res.json();
-          })
-          .then((data) => {
-            setLinksData(data);
-          })
-          .catch((err) => {
-            console.error(err);
-            alert("links.json が読み込めません");
-          });
-      }, []);
+    <!-- 経費申請 -->
+    <a class="card" href="#" target="_blank">
+      <div class="card-icon">💰</div>
+      <div class="card-title">経費申請</div>
+      <div class="card-sub">申請書類</div>
+    </a>
 
-      const openLink = (url) => {
-        if (!url || url === "#") {
-          alert("リンクが未設定です");
-        } else {
-          window.open(url, "_blank");
-        }
-      };
+    <!-- 各種申請 -->
+    <a class="card" href="#" target="_blank">
+      <div class="card-icon">📝</div>
+      <div class="card-title">各種申請</div>
+      <div class="card-sub">フォーマット</div>
+    </a>
 
-      // 詳細画面
-      if (selectedItem) {
-        return (
-          <div className="min-h-screen bg-gray-50 p-4">
-            <button
-              onClick={() => setSelectedItem(null)}
-              className="mb-4 text-blue-600 underline"
-            >
-              ← 戻る
-            </button>
+  </section>
 
-            <h2 className="text-xl font-bold mb-4">{selectedItem.title}</h2>
-
-            <button
-              onClick={() => openLink(selectedItem.url)}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold"
-            >
-              規定ファイルを開く
-            </button>
-          </div>
-        );
-      }
-
-      // ホーム画面
-      return (
-        <div className="min-h-screen bg-gray-50 p-6">
-          <h1 className="text-xl font-bold mb-6">
-            テックエンジニアリング事業本部ポータル
-          </h1>
-
-          <div className="grid grid-cols-2 gap-4">
-            {linksData.map((item, idx) => (
-              <button
-                key={idx}
-                onClick={() => setSelectedItem(item)}
-                className="bg-white p-4 rounded-xl shadow text-left"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center">
-                    <Icon name="book-open" className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <p className="font-bold">{item.title}</p>
-                    <p className="text-xs text-gray-500">社内規定</p>
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      );
-    };
-
-    const root = ReactDOM.createRoot(document.getElementById("root"));
-    root.render(<App />);
-  </script>
 </body>
 </html>
