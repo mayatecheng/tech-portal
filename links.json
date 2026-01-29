@@ -1,9 +1,8 @@
-[
-  {
-    "category": "社内規定",
-    "title": "就業規則",
-    "url": "https://example.com",
-    "note": "テスト"
-  }
-]
-
+{
+  "rules": [
+    {
+      "title": "就業規則",
+      "url": "https://example.com"
+    }
+  ]
+}
