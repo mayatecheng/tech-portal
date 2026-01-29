@@ -105,6 +105,20 @@
             const [selectedItem, setSelectedItem] = useState(null);
 
             const [linksData, setLinksData] = useState([]);
+　　　　　　　　useEffect(() => {
+  fetch('links.json')
+    .then(res => 
+      if (!res.ok) throw new Error('links.json 読み込み失敗');
+      return res.json();
+    })
+    .then(data => {
+      setLinksData(data);
+    })
+    .catch(err => {
+      console.error(err);
+      alert('links.json が読み込めません');
+    });
+}, []);
             
             const navigateTo = (view, item = null) => {
                 if (item) setSelectedItem(item);
@@ -329,6 +343,7 @@
     </script>
 </body>
 </html>
+
 
 
 
